@@ -6,10 +6,19 @@ const [num1, setNum1] = useState("");
 
 const [num2, setNum2] = useState("");
 
+const [resulFinal, setResultadoFinal] = useState("");
+
 const [resultado, setResultado] = useState(0);
+
+const nuevoArreglo = [resulFinal]
 
 const [operando, setOperando] = useState("");
 
+const [calc, setCalc] = useState(resulFinal);
+
+const handleClickNota = (index) => {
+  setCalc({...notas[index]});
+}
 
 function limpiar(){
   setNum1("");
@@ -17,6 +26,9 @@ function limpiar(){
   setOperando("");
   setResultado("");
 }
+
+const initialState = JSON.parse (localStorage.getItem("notas")) || [];
+const [notas, setNotas] = useState(initialState);
 
 function oprimir (n){
   if (operando === ""){
@@ -26,6 +38,10 @@ function oprimir (n){
   }
 }
 
+window.localStorage.setItem(
+  "resul", JSON.stringify(nuevoArreglo)
+)
+
 function oprimirOperando(n){
   setOperando(n);
 }
@@ -34,26 +50,39 @@ function getResultado (){
   switch(operando){
     case "+":
       setNum1(Number(num1) + Number(num2));
+      setResultadoFinal(Number(num1) + Number(num2));
       setOperando("");
       setNum2("");
       break;
       case "-":
         setResultado(Number(num1)- Number(num2));
+        setResultadoFinal(Number(num1) - Number(num2));
         setOperando("");
         setNum2("");
         break;
         case "*":
       setNum1(Number(num1) * Number(num2));
+      setResultadoFinal(Number(num1) * Number(num2));
       setOperando("");
       setNum2("");
       break;
       case "/":
       setNum1(Number(num1) / Number(num2));
+      setResultadoFinal(Number(num1) / Number(num2));
       setOperando("");
       setNum2("");
       break;
         default:
   }
+  setCalc(eval(resulFinal));
+
+  setNotas([...notas,{resulFinal}]);
+  localStorage.setItem("notas",JSON.stringify(notas));
+
+  setCalc(eval(resulFinal));
+
+  setNotas([...notas,{resulFinal}]);
+  localStorage.setItem("notas",JSON.stringify(notas));
 }
 
 return (
@@ -97,6 +126,23 @@ return (
         <button className="btn btn-primary" onClick={() => {oprimir(0)}} >0</button>
         <button className="btn btn-primary" onClick={getResultado} >=</button>
       
+      <div id='history'>
+    <h3>Historial de resultados</h3>
+    {notas.length===0 ?(
+          "No hay ninguna operacion realizada"
+        ) : (
+          <ol>
+            {notas.map((item, index) => {
+              return(
+                <li key={index} onClick={() => handleClickNota(index)}>
+                  {item.resulFinal}
+                  
+                </li>
+              );
+            })}
+          </ol>
+        )}
+    </div>
 
 
 
